@@ -55,15 +55,20 @@ jobs:
       id: cache-dpdk
       uses: actions/cache@v2
       with:
-        path: dpdk-$DPDK_VERSION
-        key: ${{ runner.os }}-$DPDK_VERSION
+        path: dpdk-${{ DPDK_VERSION }}
+        key: ${{ runner.os }}-${{ DPDK_VERSION }}
+
+    - name: Set enviroment variables
+      run: |
+            export PKG_CONFIG_PATH=$(pwd)/dpdk-$DPDK_VERSION/install/lib/x86_64-linux-gnu/pkgconfig/ ;
+            export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$(pwd)/dpdk-$DPDK_VERSION/install/lib/x86_64-linux-gnu/ ;
+            echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> $GITHUB_ENV
+            echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
     - name: Retrive or compile DPDK
       if: steps.cache-dpdk.outputs.cache-hit != 'true'
       run: |
             echo "Compiling DPDK..." ;
-            export PKG_CONFIG_PATH=$(pwd)/dpdk-$DPDK_VERSION/install/lib/x86_64-linux-gnu/pkgconfig/ ;
-            export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$(pwd)/dpdk-$DPDK_VERSION/install/lib/x86_64-linux-gnu/ ;
             if [ ! -e "dpdk-$DPDK_VERSION" ] || ! pkg-config --exists libdpdk ; then
                 wget http://fast.dpdk.org/rel/dpdk-$DPDK_VERSION.tar.gz &&
                 tar -zxf dpdk-$DPDK_VERSION.tar.gz &&
@@ -76,8 +81,6 @@ jobs:
                 cd .. &&
                 cd .. ;
             fi
-            echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> $GITHUB_ENV
-            echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
     - name: Clippy retina-core (no mlx5)
       run: cargo clippy --manifest-path core/Cargo.toml --no-default-features -- --deny warnings
