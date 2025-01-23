@@ -17,6 +17,7 @@ jobs:
         dpdk_version:
           - "20.11"
           - "23.11"
+          - "24.11"
     env:
       DPDK_VERSION: ${{ matrix.dpdk_version }}
     runs-on: ubuntu-latest
@@ -50,7 +51,6 @@ jobs:
             export VERSION=${{ matrix.dpdk_version }}
             export PKG_CONFIG_PATH=$(pwd)/dpdk-$STABLE$VERSION/install/lib/x86_64-linux-gnu/pkgconfig/ ;
             export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$(pwd)/dpdk-$STABLE$VERSION/install/lib/x86_64-linux-gnu/ ;
-            export DPDK_PATH=$(pwd)/dpdk-$STABLE$VERSION/install/
             if [ ! -e "dpdk-$STABLE$VERSION" ] || ! pkg-config --exists libdpdk ; then
                 wget http://fast.dpdk.org/rel/dpdk-$VERSION.tar.gz &&
                 tar -zxf dpdk-$VERSION.tar.gz &&
@@ -65,7 +65,6 @@ jobs:
             fi
             echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> $GITHUB_ENV
             echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $GITHUB_ENV
-            echo "DPDK_PATH=$DPDK_PATH" >> $GITHUB_ENV
     - name: Clippy retina-core (no mlx5)
       run: cargo clippy --manifest-path core/Cargo.toml --no-default-features -- --deny warnings
     - name: Unit test retina-core (no mlx5)
