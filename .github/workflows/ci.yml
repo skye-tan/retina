@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repositorys
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Install Rust stable
@@ -55,8 +55,8 @@ jobs:
       id: cache-dpdk
       uses: actions/cache@v2
       with:
-        path: dpdk-${{ DPDK_VERSION }}
-        key: ${{ runner.os }}-${{ DPDK_VERSION }}
+        path: dpdk-${{ matrix.dpdk_version }}
+        key: ${{ runner.os }}-${{ matrix.dpdk_version }}
 
     - name: Set enviroment variables
       run: |

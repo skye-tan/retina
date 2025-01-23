@@ -46,8 +46,8 @@ jobs:
       id: cache-dpdk
       uses: actions/cache@v2
       with:
-        path: dpdk-${{ DPDK_VERSION }}
-        key: ${{ runner.os }}-${{ DPDK_VERSION }}
+        path: dpdk-${{ matrix.dpdk_version }}
+        key: ${{ runner.os }}-${{ matrix.dpdk_version }}
 
     - name: Set enviroment variables
       run: |
